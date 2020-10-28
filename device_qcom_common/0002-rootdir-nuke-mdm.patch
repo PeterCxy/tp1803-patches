@@ -1,0 +1,74 @@
+From 4dbd204124f2e76af0d4e9e13653b3871c683ae5 Mon Sep 17 00:00:00 2001
+From: Peter Cai <peter@typeblog.net>
+Date: Wed, 28 Oct 2020 13:00:39 +0800
+Subject: [PATCH] rootdir: nuke mdm
+
+Change-Id: Iad09e49faca9473762b0265d934acc2b79e7fd0a
+---
+ rootdir/Android.mk      |  8 --------
+ rootdir/etc/init.mdm.sh | 34 ----------------------------------
+ 2 files changed, 42 deletions(-)
+ delete mode 100644 rootdir/etc/init.mdm.sh
+
+diff --git a/rootdir/Android.mk b/rootdir/Android.mk
+index 85a073580..c2e7b46da 100644
+--- a/rootdir/Android.mk
++++ b/rootdir/Android.mk
+@@ -164,14 +164,6 @@ LOCAL_SRC_FILES    := etc/init.qcom.ssr.sh
+ LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
+ include $(BUILD_PREBUILT)
+ 
+-include $(CLEAR_VARS)
+-LOCAL_MODULE       := init.mdm.sh
+-LOCAL_MODULE_TAGS  := optional
+-LOCAL_MODULE_CLASS := ETC
+-LOCAL_SRC_FILES    := etc/init.mdm.sh
+-LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
+-include $(BUILD_PREBUILT)
+-
+ include $(CLEAR_VARS)
+ LOCAL_MODULE       := init.qcom.debug.sh
+ LOCAL_MODULE_TAGS  := debug
+diff --git a/rootdir/etc/init.mdm.sh b/rootdir/etc/init.mdm.sh
+deleted file mode 100644
+index 3ed7ed5b5..000000000
+--- a/rootdir/etc/init.mdm.sh
++++ /dev/null
+@@ -1,34 +0,0 @@
+-#! /vendor/bin/sh
+-
+-# Copyright (c) 2013, The Linux Foundation. All rights reserved.
+-#
+-# Redistribution and use in source and binary forms, with or without
+-# modification, are permitted provided that the following conditions are met:
+-#     * Redistributions of source code must retain the above copyright
+-#       notice, this list of conditions and the following disclaimer.
+-#     * Redistributions in binary form must reproduce the above copyright
+-#       notice, this list of conditions and the following disclaimer in the
+-#       documentation and/or other materials provided with the distribution.
+-#     * Neither the name of Linux Foundation nor
+-#       the names of its contributors may be used to endorse or promote
+-#       products derived from this software without specific prior written
+-#       permission.
+-#
+-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+-# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+-# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-#
+-
+-baseband=`getprop ro.baseband`
+-if [ "$baseband" = "mdm" ] || [ "$baseband" = "mdm2" ]; then
+-	start vendor.mdm_helper
+-fi
+-
+-- 
+2.28.0
+
