@@ -1,0 +1,49 @@
+From e12910ef01e8d178ce8e7a12f5604f7e18e8638a Mon Sep 17 00:00:00 2001
+From: Rashed Abdel-Tawab <rashed@linux.com>
+Date: Tue, 26 Dec 2017 01:59:15 +0200
+Subject: [PATCH] build: Add vendor.prop capability
+
+To get properties on /vendor/build.prop you have to add them via
+property overrides in makefiles. This adds a second option,a
+vendor.prop file in your device rootdir or TARGET_VENDOR_PROP,
+the exact same handling as system.prop.
+
+Change-Id: I8ab2b29bd0b5f0f2bcc0928d6a2a871c40582d3f
+---
+ core/Makefile | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/core/Makefile b/core/Makefile
+index 85e1873736..006cc676a5 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -409,6 +409,11 @@ FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+     $(FINAL_VENDOR_BUILD_PROPERTIES),=)
+ endif  # property_overrides_split_enabled
+ 
++ifdef TARGET_VENDOR_PROP
++vendor_prop_file := $(TARGET_VENDOR_PROP)
++else
++vendor_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop)
++endif
+ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_system_build_prop)
+ 	@echo Target vendor buildinfo: $@
+ 	@mkdir -p $(dir $@)
+@@ -429,6 +434,14 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_sys
+ 			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
+ 			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
+ 	        bash $(VENDOR_BUILDINFO_SH) >> $@
++	$(hide) $(foreach file,$(vendor_prop_file), \
++		if [ -f "$(file)" ]; then \
++			echo "#" >> $@; \
++			echo Target buildinfo from: "$(file)"; \
++			echo "# from $(file)" >> $@; \
++			echo "#" >> $@; \
++			cat $(file) >> $@; \
++		fi;)
+ ifdef property_overrides_split_enabled
+ 	$(hide) echo "#" >> $@; \
+ 	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
+-- 
+2.28.0
+
